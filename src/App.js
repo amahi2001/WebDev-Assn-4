@@ -4,7 +4,7 @@ src/App.js
 This is the top-level component of the app.
 It contains the top-level state.
 ==================================================*/
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle';
@@ -24,7 +24,7 @@ class App extends Component {
   constructor() {  // Create and initialize state
     super();
     this.state = {
-      accountBalance: 1234567.89,
+      accountBalance: 0,
       creditList: [],
       debitList: [],
       currentUser: {
@@ -34,10 +34,28 @@ class App extends Component {
     };
   }
 
+  //update account balance based on credits and debits
+  updateBalance() {
+    let creditSum = 0;
+    let debitSum = 0;
+    for (let i of this.state.creditList) {
+      creditSum += i.amount;
+    }
+    for (let i of this.state.debitList) {
+      debitSum += i.amount;
+    }
+    this.setState(
+      {
+        accountBalance: creditSum - debitSum
+      }
+    );
+  }
+
+
   componentDidMount() {  // Fetch data from API
     fetch('https://johnnylaicode.github.io/api/credits.json')
       .then(response => response.json())
-      .then(data => this.setState({ creditList: data }))
+      .then(data => this.setState({ creditList: data }, () => this.updateBalance()))
       .catch(error => console.log('Error fetching and parsing data', error));
   }
 
@@ -56,7 +74,10 @@ class App extends Component {
       <UserProfile userName={this.state.currentUser.userName} memberSince={this.state.currentUser.memberSince} />
     )
     const LogInComponent = () => (<LogIn user={this.state.currentUser} mockLogIn={this.mockLogIn} />)
-    const CreditsComponent = () => (<Credits credits={this.state.creditList} />)
+    const CreditsComponent = () => (<Credits credits={this.state.creditList} addCredit={(obj) => {
+      const newCreditList = [...this.state.creditList, obj];
+      this.setState({ creditList: newCreditList },  () => this.updateBalance());
+    }} accountBalance={this.state.accountBalance} />)
     const DebitsComponent = () => (<Debits debits={this.state.debitList} />)
 
     // Important: Include the "basename" in Router, which is needed for deploying the React app to GitHub Pages

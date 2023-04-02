@@ -20,7 +20,7 @@ class Home extends Component {
           </Col>
         </Row>
         <br />
-        <AccountBalance accountBalance={this.props.accountBalance} />
+        <AccountBalance accountBalance={this.props.accountBalance.toFixed(2)} />
       </Fragment>
     );
   }
