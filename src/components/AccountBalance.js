@@ -9,9 +9,9 @@ class AccountBalance extends Component {
   // Display account balance
   render() {
     return (
-      <div>
+      <p className="text-center lead text-primary">
         Balance: {this.props.accountBalance}
-      </div>
+      </p>
     );
   }
 }
