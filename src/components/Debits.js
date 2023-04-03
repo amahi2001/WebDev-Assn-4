@@ -4,33 +4,81 @@ src/components/Debits.js
 The Debits component contains information for Debits page view.
 Note: You need to work on this file for the Assignment.
 ==================================================*/
-import {Link} from 'react-router-dom';
+import { Fragment } from 'react';
+//react bootstrap
+import ListGroup from 'react-bootstrap/ListGroup';
+import Badge from 'react-bootstrap/Badge';
+import Form from 'react-bootstrap/Form';
+import InputGroup from 'react-bootstrap/InputGroup';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import Button from 'react-bootstrap/Button';
 
 const Debits = (props) => {
-  // Create the list of Debit items
-  let debitsView = () => {
-    const { debits } = props;
-    return debits.map((debit) => {  // Extract "id", "amount", "description" and "date" properties of each debits JSON array element
-      let date = debit.date.slice(0,10);
-      return <li key={debit.id}>{debit.amount} {debit.description} {date}</li>
+  function onSubmit(e) {
+    e.preventDefault();
+    props.addDebit({
+      id: props.debits.length + 1,
+      amount: Number(e.target.amount.value),
+      description: e.target.desc.value,
+      date: new Date().toJSON()
     });
   }
-  // Render the list of Debit items and a form to input new Debit item
+
+  const TotalDebits = props.debits.reduce((total, debit) => total + debit.amount, 0);
   return (
-    <div>
-      <h1>Debits</h1>
+    <Fragment>
+      <h1 className="display-5 text-center">Debits</h1>
+      <br />
+      <p className="lead"> <b> Account Balance:</b> {`$${props.accountBalance.toFixed(2)}`}</p>
 
-      {debitsView()}
+      <Form onSubmit={onSubmit}>
+        <Row>
+          <Form.Group className="mb-3" controlId="amount" as={Col} md={4}>
+            <Form.Label>Amount</Form.Label>
+            <InputGroup className="mb-3">
+              <InputGroup.Text>$</InputGroup.Text>
+              <Form.Control type="number" required aria-label="Amount" step="any" />
+            </InputGroup>
+          </Form.Group>
+          <Form.Group className="mb-3" controlId="desc" as={Col} md={4}>
+            <Form.Label>Description</Form.Label>
+            <Form.Control type="text" required aria-label="Description" />
+          </Form.Group>
+          <Col className="my-auto">
+            <Button type="submit" className="rounded-pill" variant="outline-primary">
+              Add Debit
+            </Button>
+          </Col>
+        </Row>
+      </Form>
 
-      <form onSubmit={props.addDebit}>
-        <input type="text" name="description" />
-        <input type="number" name="amount" />
-        <button type="submit">Add Debit</button>
-      </form>
-      <br/>
-      <Link to="/">Return to Home</Link>
-    </div>
+      <ListGroup as="ol">
+        {
+          props.debits.map((debit) => {
+            return (
+              <ListGroup.Item
+                as="li"
+                className="d-flex justify-content-between align-items-start"
+                key={debit.id}
+              >
+                <span className="ms-2 me-auto">
+                  <div className="fw-bold">{`${debit.id}. ${debit.description}`}</div>
+                  {debit.date.slice(0, 10)}
+                </span>
+                <Badge bg="primary" pill>
+                  {`$${debit.amount.toFixed(2)}`}
+                </Badge>
+              </ListGroup.Item>
+            )
+          }
+          )
+        }
+      </ListGroup>
+      <p className="lead mt-2"> <b> Total Debits:</b> {`$${TotalDebits.toFixed(2)}`}</p>
+    </Fragment>
   );
+
 }
 
 export default Debits;

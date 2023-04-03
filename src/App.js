@@ -53,9 +53,16 @@ class App extends Component {
 
 
   componentDidMount() {  // Fetch data from API
+    //credits
     fetch('https://johnnylaicode.github.io/api/credits.json')
       .then(response => response.json())
       .then(data => this.setState({ creditList: data }, () => this.updateBalance()))
+      .catch(error => console.log('Error fetching and parsing data', error));
+
+    //debits
+    fetch('https://johnnylaicode.github.io/api/debits.json')
+      .then(response => response.json())
+      .then(data => this.setState({ debitList: data }, () => this.updateBalance()))
       .catch(error => console.log('Error fetching and parsing data', error));
   }
 
@@ -74,11 +81,14 @@ class App extends Component {
       <UserProfile userName={this.state.currentUser.userName} memberSince={this.state.currentUser.memberSince} />
     )
     const LogInComponent = () => (<LogIn user={this.state.currentUser} mockLogIn={this.mockLogIn} />)
-    const CreditsComponent = () => (<Credits credits={this.state.creditList} addCredit={(obj) => {
+    const CreditsComponent = () => (<Credits accountBalance={this.state.accountBalance} credits={this.state.creditList} addCredit={(obj) => {
       const newCreditList = [...this.state.creditList, obj];
-      this.setState({ creditList: newCreditList },  () => this.updateBalance());
-    }} accountBalance={this.state.accountBalance} />)
-    const DebitsComponent = () => (<Debits debits={this.state.debitList} />)
+      this.setState({ creditList: newCreditList }, () => this.updateBalance());
+    }} />)
+    const DebitsComponent = () => (<Debits accountBalance={this.state.accountBalance} debits={this.state.debitList} addDebit={(obj) => {
+      const newDebitList = [...this.state.debitList, obj];
+      this.setState({ debitList: newDebitList }, () => this.updateBalance());
+    }} />)
 
     // Important: Include the "basename" in Router, which is needed for deploying the React app to GitHub Pages
     return (
