@@ -48,12 +48,12 @@ class LogIn extends Component {
 
         <Form onSubmit={this.handleSubmit}>
           <Form.Group className="mb-3" controlId="formGroupEmail">
-            <Form.Label>Email address</Form.Label>
-            <Form.Control required type="email" placeholder="Enter email" />
+            <Form.Label>Username</Form.Label>
+            <Form.Control type="text" placeholder="Enter email" defaultValue={this.props.user.userName} onChange={this.handleChange} />
           </Form.Group>
           <Form.Group className="mb-3" controlId="formGroupPassword">
             <Form.Label>Password</Form.Label>
-            <Form.Control required type="password" placeholder="Password" />
+            <Form.Control type="password" placeholder="Password" />
           </Form.Group>
           <button className='btn btn-outline-primary rounded-pill' type="submit">Log In</button>
         </Form>
